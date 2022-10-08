@@ -1,0 +1,16 @@
+html,
+body {
+  --SCALE_FACTOR: 2.5;
+  --SPRITE_TILE_SIZE: 8px;
+  --SCREEN_TILE_SIZE: calc(var(--SCALE_FACTOR) * var(--SPRITE_TILE_SIZE));
+
+  background-color: black;
+  padding: 0;
+  margin: 0;
+  color: white;
+}
+
+@font-face {
+  font-family: 'Joystix';
+  src: url('./resources/Joystix.ttf');
+}
