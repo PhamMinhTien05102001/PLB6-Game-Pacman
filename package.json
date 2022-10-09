@@ -60,8 +60,5 @@
     "prettier": "^1.19.1"
   },
   "husky": {
-    "hooks": {
-      "pre-push": "yarn compile && yarn lint && yarn test:ci"
-    }
   }
 }
