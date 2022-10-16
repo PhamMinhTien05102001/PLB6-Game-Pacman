@@ -1,6 +1,6 @@
 import { Row } from 'antd';
 import { observer } from 'mobx-react-lite';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import styled from 'styled-components/macro';
 import { Board } from '../../components/Board';
 import { DebugView } from './components/DebugView';
@@ -15,6 +15,8 @@ import { useStore } from '../../components/StoreContext';
 import { useKeyboardActions } from './components/useKeyboardActions';
 import { VSpace } from '../../components/Spacer';
 import { useGameLoop } from '../../model/useGameLoop';
+import WebcamGame from './components/WebcamGame';
+import { Direction } from '../../model/Types';
 
 export const GamePage: React.FC = observer(() => {
   const store = useStore();
@@ -25,39 +27,43 @@ export const GamePage: React.FC = observer(() => {
     };
     // eslint-disable-next-line  react-hooks/exhaustive-deps
   }, []);
-
+  const triggerDirection = (direction: Direction) => {
+    store.game.pacMan.direction = direction;
+  };
   useGameLoop();
   useKeyboardActions();
 
   return (
-    <Layout data-testid="GamePage">
-      <ScoreArea>
-        <Row justify="center">
-          <Score />
-        </Row>
-        <VSpace size="small" />
-      </ScoreArea>
+    <>
+      <Layout data-testid="GamePage">
+        <ScoreArea>
+          <Row justify="center">
+            <Score />
+          </Row>
+          <VSpace size="small" />
+        </ScoreArea>
 
-      <EmptyArea />
+        <EmptyArea />
 
-      <BoardArea>
-        <Board>
-          <MazeView />
-          <PillsView />
-          <PacManView />
-          <GhostsGameView />
-          {/* <GameOver /> */}
-        </Board>
-        <VSpace size="large" />
-        <Row justify="center">
-          <ExtraLives />
-        </Row>
-      </BoardArea>
-
+        <BoardArea>
+          <Board>
+            <MazeView />
+            <PillsView />
+            <PacManView />
+            <GhostsGameView />
+            <GameOver />
+          </Board>
+          <VSpace size="large" />
+          <Row justify="center">
+            <ExtraLives />
+          </Row>
+        </BoardArea>
+        <WebcamGame triggerDirection={triggerDirection} />
+      </Layout>
       <DebugArea>
         <DebugView />
       </DebugArea>
-    </Layout>
+    </>
   );
 });
 
