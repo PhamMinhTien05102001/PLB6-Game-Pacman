@@ -3,11 +3,11 @@ import MapData from '../mapData/pacman6.json';
 export type TileId = number;
 
 export const EMPTY_TILE_ID: TileId = 0;
-export const BASIC_PILL_ID: TileId = 3533;
-export const ENERGIZER_ID: TileId = 3589;
+export const BASIC_PILL_ID: TileId = 900;
+export const ENERGIZER_ID: TileId = 956;
 
-export const WAY_FREE_ID: TileId = 5240;
-export const BOX_DOOR_ID: TileId = 5241;
+export const WAY_FREE_ID: TileId = 869;
+export const BOX_DOOR_ID: TileId = 870;
 
 export type TileMatrix = TileId[][];
 

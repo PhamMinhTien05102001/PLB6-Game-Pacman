@@ -1,0 +1,86 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "mapv2.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "C:/PacmanMap/arcade full.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1
+        },
+        "C:/Users/trong/Desktop/PacmanMap/Ways.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/trong/Desktop/PacmanMap/arcade empty.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/trong/Desktop/PacmanMap/arcade full.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "C:/Users/trong/Desktop/PacmanMap/mapv2.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 527.3333333333333,
+                "y": 191.33333333333331
+            }
+        },
+        "C:/Users/trong/Desktop/PacmanMap/pacman6.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "C:/Users/trong/Desktop/Pbl6/pacman-react/src/mapData/Maze full.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1
+        },
+        "Ways.tsx": {
+            "scaleInDock": 1
+        },
+        "map empty.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "map-full.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "mapv2.tmx": {
+            "scale": 3,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": -71.83333333333333,
+                "y": 94.83333333333333
+            }
+        },
+        "temp-way.tsx": {
+            "scaleInDock": 1
+        }
+    },
+    "last.exportedFilePath": "C:/Users/trong/Desktop/Mapv2",
+    "last.imagePath": "C:/Users/trong/Desktop/Mapv2",
+    "map.height": 31,
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 8,
+    "map.tileWidth": 8,
+    "map.width": 28,
+    "openFiles": [
+        "mapv2.tmx"
+    ],
+    "project": "Pac-map.tiled-project",
+    "recentFiles": [
+        "mapv2.tmx",
+        "C:/Users/trong/Desktop/PacmanMap/mapv2.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 8,
+        "width": 8
+    }
+}
