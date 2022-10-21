@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import { useCallback, useRef } from 'react';
 import Webcam from 'react-webcam';
 import styled from 'styled-components';
-import { useStore } from '../../../components/StoreContext';
+
 import { Direction } from '../../../model/Types';
 
 const videoConstraints = {
@@ -18,10 +18,7 @@ const WebcamGame = observer(
     triggerDirection: (direction: Direction) => any;
   }) => {
     const webcamRef = useRef<any>(null);
-    const store = useStore();
-    const { game } = store;
 
-    const pacMan = game.pacMan;
     const capture = useCallback(() => {
       webcamRef.current!.getScreenshot();
       triggerDirection('DOWN');

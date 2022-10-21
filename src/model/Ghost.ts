@@ -183,7 +183,7 @@ export class Ghost {
     );
   }
 
-  statePhaseTimer = new TimeoutTimer(3000);
+  statePhaseTimer = new TimeoutTimer(5000);
 
   @computed
   get isInsideBoxWalls(): boolean {
