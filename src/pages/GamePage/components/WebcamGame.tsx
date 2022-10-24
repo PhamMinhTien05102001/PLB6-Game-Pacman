@@ -7,7 +7,7 @@ import { Direction } from '../../../model/Types';
 
 const videoConstraints = {
   width: 1280,
-  height: 720,
+  height: 900,
   facingMode: 'user',
 };
 
@@ -24,22 +24,17 @@ const WebcamGame = observer(
       triggerDirection('DOWN');
     }, [webcamRef]);
     return (
-      <Layout>
+      <div className="my-video">
         <Webcam
           audio={false}
           height={600}
           ref={webcamRef}
           screenshotFormat="image/jpeg"
-          width={600}
+          width={800}
+          mirrored={true}
           videoConstraints={videoConstraints}
         />
-        <button
-          onClick={capture}
-          style={{ width: 'auto', background: 'blue', cursor: 'pointer' }}
-        >
-          Change direction
-        </button>
-      </Layout>
+      </div>
     );
   }
 );

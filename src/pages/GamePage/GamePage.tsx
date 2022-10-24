@@ -1,6 +1,6 @@
 import { Row } from 'antd';
 import { observer } from 'mobx-react-lite';
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components/macro';
 import { Board } from '../../components/Board';
 import { DebugView } from './components/DebugView';
@@ -75,10 +75,6 @@ const Layout = styled.div`
 
   @media (min-width: 1280px) {
     grid-template-columns: 1fr 1fr;
-    justify-items: center;
-  }
-  @media (max-width: 1280px) {
-    grid-template-columns: 1fr;
     justify-items: center;
   }
 `;

@@ -143,9 +143,13 @@ const chooseSomeRandomMovement = (ghost: Ghost): TileCoordinates => {
       direction !== ghost.direction &&
       isWayFreeInDirection(ghost.tileCoordinates, direction)
   );
-  assert(candidateDirections.length > 0);
+
+  // assert(
+  //   candidateDirections.length > 0,
+  //   `Candiate ${candidateDirections.length}`
+  // );
   const newDirection =
-    candidateDirections[getRandomInt(candidateDirections.length)];
+    candidateDirections[getRandomInt(candidateDirections.length)] || 'UP';
   assert(newDirection);
   const randomNeighourTile = getNextTile(ghost.tileCoordinates, newDirection);
 
@@ -153,8 +157,8 @@ const chooseSomeRandomMovement = (ghost: Ghost): TileCoordinates => {
 };
 
 const chooseInDeadMode = (ghost: Ghost): TileCoordinates => {
-  // if (ghost.deadWaitingTimeInBoxLeft < 0) {
-  //   return chooseSomeRandomMovement(ghost);
-  // }
+  if (ghost.deadWaitingTimeInBoxLeft < 0) {
+    return chooseSomeRandomMovement(ghost);
+  }
   return TILE_FOR_RETURNING_TO_BOX;
 };

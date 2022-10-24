@@ -1,6 +1,5 @@
 import { useCallback, useEffect } from 'react';
 import { useStore } from '../../../components/StoreContext';
-import { eatEnergizer } from '../../../model/eatEnergizer';
 
 /* eslint-disable  react-hooks/exhaustive-deps */
 export const useKeyboardActions = (): void => {
@@ -24,8 +23,12 @@ export const useKeyboardActions = (): void => {
       case 'ArrowDown':
         pacMan.nextDirection = 'DOWN';
         break;
-      case 'x':
-        eatEnergizer(game);
+      case 'z':
+        // game.killedGhosts = 0;
+        // game.pacMan.send('ENERGIZER_EATEN');
+        // for (const ghost of game.ghosts) {
+        //   ghost.send('ENERGIZER_EATEN');
+        // }
         break;
       case ' ':
         game.gamePaused = !game.gamePaused;
@@ -36,10 +39,10 @@ export const useKeyboardActions = (): void => {
   }, []);
 
   useEffect(() => {
-    document.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keydown', onKeyDown);
 
     return () => {
-      document.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keydown', onKeyDown);
     };
   }, []);
 };
