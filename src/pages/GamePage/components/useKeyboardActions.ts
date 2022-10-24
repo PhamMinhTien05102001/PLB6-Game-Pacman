@@ -23,12 +23,12 @@ export const useKeyboardActions = (): void => {
       case 'ArrowDown':
         pacMan.nextDirection = 'DOWN';
         break;
-      case 'z':
-        // game.killedGhosts = 0;
-        // game.pacMan.send('ENERGIZER_EATEN');
-        // for (const ghost of game.ghosts) {
-        //   ghost.send('ENERGIZER_EATEN');
-        // }
+      case 'x':
+        game.killedGhosts = 0;
+        game.pacMan.send('ENERGIZER_EATEN');
+        for (const ghost of game.ghosts) {
+          ghost.send('ENERGIZER_EATEN');
+        }
         break;
       case ' ':
         game.gamePaused = !game.gamePaused;
