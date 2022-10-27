@@ -1,0 +1,5 @@
+.reactEasyCrop_Container {
+  top: 120%;
+  /* visibility: hidden; */
+  z-index: -10;
+}
