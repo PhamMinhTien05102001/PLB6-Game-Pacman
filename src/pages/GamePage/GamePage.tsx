@@ -17,9 +17,6 @@ import { VSpace } from '../../components/Spacer';
 import { useGameLoop } from '../../model/useGameLoop';
 import WebcamGame from './components/WebcamGame';
 import { Direction } from '../../model/Types';
-// import { Switch } from 'react-router-dom';
-import { useState } from 'react';
-import { Switch } from 'antd';
 
 export const GamePage: React.FC = observer(() => {
   const store = useStore();
@@ -36,16 +33,8 @@ export const GamePage: React.FC = observer(() => {
   useGameLoop();
   useKeyboardActions();
 
-  const [hide, setHide] = useState(false);
-  const toggleHide = () => {
-    setHide(!hide);
-  };
   return (
     <>
-      <div className="debugbar-toggle-wrap">
-        Show Debug Bar
-        <Switch onClick={toggleHide} className="debugbar-toggle" />
-      </div>
       <Layout data-testid="GamePage">
         <ScoreArea>
           <Row justify="center">
@@ -71,11 +60,9 @@ export const GamePage: React.FC = observer(() => {
         </BoardArea>
         <WebcamGame triggerDirection={triggerDirection} />
       </Layout>
-      <div className="debugbar-wrap" style={{ display: hide ? 'flex' : 'none' }}>
-        <DebugArea>
-          <DebugView />
-        </DebugArea>
-      </div>
+      <DebugArea>
+        <DebugView />
+      </DebugArea>
     </>
   );
 });

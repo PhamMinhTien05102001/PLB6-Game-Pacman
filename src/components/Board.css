@@ -4,25 +4,3 @@
   height: calc(31 * var(--SCREEN_TILE_SIZE));
   overflow: hidden;
 }
-.debugbar-wrap{
-  justify-content: center;
-}
-
-.debugbar-toggle-wrap{
-  margin: 0 12px;
-  margin-top: -1px;
-  margin-bottom: 0;
-  padding: 0 12px;
-  padding-right: 0;
-  padding-left: 0;
-}
-
-.debugbar-toggle{
-  margin-left: 10px;
-}
-.debugbar-toggle.ant-switch{
-      background-color: rgb(205 205 205) ;
-}
-.debugbar-toggle.ant-switch.ant-switch-checked{
-  background-color: #1890ff !important;
-}
