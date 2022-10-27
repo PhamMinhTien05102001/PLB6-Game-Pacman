@@ -6,8 +6,8 @@ import styled from 'styled-components';
 import { Direction } from '../../../model/Types';
 
 const videoConstraints = {
-  width: 1280,
-  height: 900,
+  width: 800,
+  height: 600,
   facingMode: 'user',
 };
 
@@ -24,13 +24,14 @@ const WebcamGame = observer(
       triggerDirection('DOWN');
     }, [webcamRef]);
     return (
-      <div className="my-video">
+      <div className="my-video" style={{ position: 'relative' }}>
+        <CaptureFrame />
         <Webcam
           audio={false}
+          width={800}
           height={600}
           ref={webcamRef}
           screenshotFormat="image/jpeg"
-          width={800}
           mirrored={true}
           videoConstraints={videoConstraints}
         />
@@ -38,6 +39,14 @@ const WebcamGame = observer(
     );
   }
 );
+const CaptureFrame = styled.div`
+  position: absolute;
+  width: 400px;
+  height: 300px;
+  border: 5px solid salmon;
+  right: 0;
+  z-index: 20;
+`;
 
 const Layout = styled.div`
   display: flex;
