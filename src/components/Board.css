@@ -6,15 +6,15 @@
 }
 .debugbar-wrap{
   justify-content: center;
+  padding-bottom: 30px;
 }
 
 .debugbar-toggle-wrap{
   margin: 0 12px;
-  margin-top: -1px;
   margin-bottom: 0;
-  padding: 0 12px;
   padding-right: 0;
   padding-left: 0;
+  height: 80%;
 }
 
 .debugbar-toggle{
