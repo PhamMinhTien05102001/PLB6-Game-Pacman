@@ -23,6 +23,7 @@ import { Switch } from 'antd';
 
 export const GamePage: React.FC = observer(() => {
   const store = useStore();
+
   useEffect(() => {
     store.resetGame();
     return () => {
@@ -69,6 +70,7 @@ export const GamePage: React.FC = observer(() => {
             <ExtraLives />
           </Row>
         </BoardArea>
+
         <WebcamGame triggerDirection={triggerDirection} />
       </Layout>
       <div className="debugbar-wrap" style={{ display: hide ? 'flex' : 'none' }}>
