@@ -20,6 +20,7 @@ import { Direction } from '../../model/Types';
 // import { Switch } from 'react-router-dom';
 import { useState } from 'react';
 import { Switch } from 'antd';
+import { Progress } from './components/Progress';
 
 export const GamePage: React.FC = observer(() => {
   const store = useStore();
@@ -51,6 +52,7 @@ export const GamePage: React.FC = observer(() => {
         <ScoreArea>
           <Row justify="center">
             <Score />
+            <Progress />
           </Row>
           <VSpace size="small" />
         </ScoreArea>
@@ -73,7 +75,10 @@ export const GamePage: React.FC = observer(() => {
 
         <WebcamGame triggerDirection={triggerDirection} />
       </Layout>
-      <div className="debugbar-wrap" style={{ display: hide ? 'flex' : 'none' }}>
+      <div
+        className="debugbar-wrap"
+        style={{ display: hide ? 'flex' : 'none' }}
+      >
         <DebugArea>
           <DebugView />
         </DebugArea>
