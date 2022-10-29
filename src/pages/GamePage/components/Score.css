@@ -1,7 +1,11 @@
 .Score {
-  display: inline-flex;
-  min-width: 170px;
-  justify-content: space-between;
+  display: flex;
+  min-width: 120px;
   font-family: Joystix;
   font-size: 18px;
+  align-items: center ;
+
+}
+.Score span{
+  margin-right: 20px;
 }

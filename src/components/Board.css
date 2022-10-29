@@ -10,11 +10,14 @@
 }
 
 .debugbar-toggle-wrap{
-  margin: 0 12px;
   margin-bottom: 0;
   padding-right: 0;
   padding-left: 0;
   height: 80%;
+  position: relative;
+  top: -40px;
+  left: 90%;
+  margin-right: 150px;
 }
 
 .debugbar-toggle{
@@ -25,4 +28,8 @@
 }
 .debugbar-toggle.ant-switch.ant-switch-checked{
   background-color: #1890ff !important;
+}
+
+.custom-row{
+  width: calc(28 * var(--SCREEN_TILE_SIZE));
 }

@@ -33,7 +33,17 @@ export const GamePage: React.FC = observer(() => {
     // eslint-disable-next-line  react-hooks/exhaustive-deps
   }, []);
   const triggerDirection = (direction: Direction) => {
-    store.game.pacMan.direction = direction;
+    store.game.pacMan.nextDirection = direction;
+  };
+  const triggerChaos = () => {
+    store.game.killedGhosts = 0;
+    store.game.pacMan.send('ENERGIZER_EATEN');
+    for (const ghost of store.game.ghosts) {
+      ghost.send('ENERGIZER_EATEN');
+    }
+  };
+  const triggerGamePause = () => {
+    store.game.gamePaused = true;
   };
   useGameLoop();
   useKeyboardActions();
@@ -50,9 +60,10 @@ export const GamePage: React.FC = observer(() => {
       </div>
       <Layout data-testid="GamePage">
         <ScoreArea>
-          <Row justify="center">
+          <Row justify="space-between" className="custom-row">
             <Score />
             <Progress />
+            <ExtraLives />
           </Row>
           <VSpace size="small" />
         </ScoreArea>
@@ -68,12 +79,13 @@ export const GamePage: React.FC = observer(() => {
             <GameOver />
           </Board>
           <VSpace size="large" />
-          <Row justify="center">
-            <ExtraLives />
-          </Row>
         </BoardArea>
 
-        <WebcamGame triggerDirection={triggerDirection} />
+        <WebcamGame
+          triggerDirection={triggerDirection}
+          triggerGamePause={triggerGamePause}
+          triggerChaos={triggerChaos}
+        />
       </Layout>
       <div
         className="debugbar-wrap"
