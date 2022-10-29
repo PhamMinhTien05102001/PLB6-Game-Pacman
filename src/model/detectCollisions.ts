@@ -74,6 +74,7 @@ const eatPillLayerObject = (tile: TileCoordinates, game: Game) => {
   switch (tileId) {
     case BASIC_PILL_ID:
       eatPill(tile, game);
+      countPill(tile, game);
       break;
     case ENERGIZER_ID:
       eatEnergizer(game);
@@ -86,9 +87,18 @@ const eatPillLayerObject = (tile: TileCoordinates, game: Game) => {
   game.maze.pills[tile.y][tile.x] = EMPTY_TILE_ID;
 };
 
+
 const eatPill = (tile: TileCoordinates, game: Game) => {
   game.score += BASIC_PILL_POINTS;
 };
+
+const MAX_POWER = 150;
+const countPill = (tile: TileCoordinates, game: Game) => {
+  if (game.atePills < 150) {
+    game.atePills += 1;
+    game.power = game.atePills / MAX_POWER * 100;
+  }
+}
 
 const detectGhostCollisions = (game: Game) => {
   const pacManHitBox: Rectangle = getPacManHitBox(

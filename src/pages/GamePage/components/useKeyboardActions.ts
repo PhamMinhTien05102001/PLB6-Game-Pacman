@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useStore } from '../../../components/StoreContext';
+import { useGame } from '../../../components/StoreContext';
 
 /* eslint-disable  react-hooks/exhaustive-deps */
 export const useKeyboardActions = (): void => {
@@ -24,10 +25,13 @@ export const useKeyboardActions = (): void => {
         pacMan.nextDirection = 'DOWN';
         break;
       case 'x':
-        game.killedGhosts = 0;
-        game.pacMan.send('ENERGIZER_EATEN');
-        for (const ghost of game.ghosts) {
-          ghost.send('ENERGIZER_EATEN');
+        if(game.atePills === 150){
+          game.killedGhosts = 0;
+          game.pacMan.send('ENERGIZER_EATEN');
+          for (const ghost of game.ghosts) {
+            ghost.send('ENERGIZER_EATEN');
+          }
+          game.atePills = 0;
         }
         break;
       case ' ':
