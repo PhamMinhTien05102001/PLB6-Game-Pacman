@@ -22,7 +22,7 @@ export const AppMenu: React.FC = () => {
         <Menu.Item key="/maze">Maze</Menu.Item>
         <Menu.Item key="/way-finding">Way Finding</Menu.Item>
       </MenuStyled>
-      <VSpace size="large" />
+      <VSpace size="small" />
     </div>
   );
 };

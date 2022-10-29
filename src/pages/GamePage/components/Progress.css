@@ -1,0 +1,15 @@
+.Progress {
+  justify-content: space-between;
+  font-family: Joystix;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 20px;
+}
+.Progress span{
+  margin-right: 10px;
+}
+.progress-bar{
+  width: 200px;
+}
