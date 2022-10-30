@@ -135,7 +135,7 @@ def apiProcess(name_model):
 @app.route('/')
 @cross_origin(origin='*')
 def init():
-    return redirect('/')
+    return redirect('test/mobi-v2')
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=3000, host="0.0.0.0")
