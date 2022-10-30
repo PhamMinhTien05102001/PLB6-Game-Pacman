@@ -36,6 +36,8 @@ const detectHandInBox = (finger: any) => {
   return true;
 };
 
+const ENOUGH_TO_ADD = 2;
+
 const WebcamGame = observer(
   ({
     triggerDirection,
@@ -66,7 +68,7 @@ const WebcamGame = observer(
 
     const detectGesture = useCallback(() => {
       for (let i in gestureCount) {
-        if (gestureCount[i as gestureCount] >= 2) {
+        if (gestureCount[i as gestureCount] >= ENOUGH_TO_ADD) {
           resetGestureCount();
           setGesture(i);
         }
@@ -148,7 +150,10 @@ const WebcamGame = observer(
       })
         .then(function(response: any) {
           //handle success
-          gestureCount[response.data['Class Name'] as gestureCount] += 1;
+          console.log(response.data);
+          if (response.data['Percent'] >= 90) {
+            gestureCount[response.data['Class Name'] as gestureCount] += 1;
+          }
           detectGesture();
           // setGesture(response.data['Class Name']);
         })
