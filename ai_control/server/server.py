@@ -65,7 +65,6 @@ def transform_image(image_bytes):
         ]
     )
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-    image = image.transpose(method=Image.FLIP_LEFT_RIGHT)
     return transform(image).unsqueeze(0)
 
 def classificationTest(model, image):
