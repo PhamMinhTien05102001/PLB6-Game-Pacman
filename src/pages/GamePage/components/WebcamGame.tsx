@@ -8,7 +8,7 @@ import './WebCam.css';
 // import * as hands from '@mediapipe/hands';
 // import { Camera } from '@mediapipe/camera_utils';
 import { Point } from 'react-easy-crop/types';
-import { API_URL } from '../../../constant/index';
+import { API_URL_DEPLOY } from '../../../constant/index';
 import Cropper from 'react-easy-crop';
 import { Direction } from '../../../model/Types';
 import getCroppedImg from '../utils/cropImage';
@@ -17,6 +17,14 @@ const videoConstraints = {
   width: 800,
   height: 600,
   facingMode: 'user',
+};
+
+const captureConfig = {
+  width: 300,
+  height: 300,
+  timeCapture: 1000,
+  acceptThreshold: 2,
+  acceptPercent: 90,
 };
 // interface FingerCors {
 //   x: number;
@@ -36,16 +44,19 @@ type gestureCount = 'Attack' | 'Bottom' | 'Left' | 'Right' | 'Stop' | 'Top';
 //   return true;
 // };
 
-const ENOUGH_TO_ADD = 2;
-const TIME_TO_CAPTURE = 3000;
 const WebcamGame = observer(
   ({
     triggerDirection,
+    triggerGamePause,
+    triggerChaos,
   }: {
     triggerDirection: (direction: Direction) => any;
+    triggerGamePause: () => any;
+    triggerChaos: () => any;
   }) => {
-    const [crop, setCrop] = useState<Point>({ x: -800, y: 300 });
+    const [crop, setCrop] = useState<Point>({ x: -800, y: -500 });
     const webcamRef = useRef<any>(null);
+
     const buttonRef = useRef<HTMLButtonElement>(null);
     const [gesture, setGesture] = useState<string>();
     // const [countHandInBox, setCountHandInBox] = useState<number>(0);
@@ -68,9 +79,15 @@ const WebcamGame = observer(
 
     const detectGesture = () => {
       for (let i in gestureCount) {
-        if (gestureCount[i as gestureCount] >= ENOUGH_TO_ADD) {
+        if (gestureCount[i as gestureCount] >= captureConfig.acceptThreshold) {
           resetGestureCount();
           setGesture(i);
+          if (i === 'Bottom') triggerDirection('DOWN');
+          if (i === 'Left') triggerDirection('LEFT');
+          if (i === 'Right') triggerDirection('RIGHT');
+          if (i === 'Top') triggerDirection('UP');
+          if (i === 'Attack') triggerChaos();
+          if (i === 'Stop') triggerGamePause();
         }
       }
     };
@@ -88,7 +105,7 @@ const WebcamGame = observer(
     useEffect(() => {
       const captureInterval = setInterval(() => {
         buttonRef.current?.click();
-      }, TIME_TO_CAPTURE);
+      }, captureConfig.timeCapture);
       return () => clearInterval(captureInterval);
     }, []);
 
@@ -131,10 +148,10 @@ const WebcamGame = observer(
       const imageSrc = webcamRef.current.getScreenshot({});
       setImgSrc(imageSrc);
       const imgCrop = await getCroppedImg(imageSrc, {
-        width: 240,
-        height: 240,
-        x: 560,
-        y: 0,
+        width: captureConfig.width,
+        height: captureConfig.height,
+        x: videoConstraints.width - captureConfig.width,
+        y: videoConstraints.height - captureConfig.height,
       });
 
       const form = new FormData();
@@ -142,7 +159,7 @@ const WebcamGame = observer(
       // console.log(imgCrop);
       axios({
         method: 'post',
-        url: API_URL,
+        url: API_URL_DEPLOY,
         data: form,
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -153,7 +170,7 @@ const WebcamGame = observer(
           //handle success
 
           // console.log(response.data);
-          if (response.data['Percent'] >= 95) {
+          if (response.data['Percent'] >= captureConfig.acceptPercent) {
             // console.log(response.data['Class Name'], 'Plus one');
             gestureCount[response.data['Class Name'] as gestureCount] += 1;
           }
@@ -188,7 +205,10 @@ const WebcamGame = observer(
           <Cropper
             image={imgSrc}
             crop={crop}
-            cropSize={{ width: 240, height: 240 }}
+            cropSize={{
+              width: captureConfig.width,
+              height: captureConfig.height,
+            }}
             aspect={1}
             onCropChange={setCrop}
           />
@@ -200,10 +220,11 @@ const WebcamGame = observer(
 
 const CaptureFrame = styled.div`
   position: absolute;
-  width: 240px;
-  height: 240px;
-  border: 5px solid salmon;
-  right: 0;
+  width: ${captureConfig.width}px;
+  height: ${captureConfig.height}px;
+  border: 3px solid salmon;
+  right: 0px;
+  bottom: 3px;
   z-index: 20;
 `;
 
