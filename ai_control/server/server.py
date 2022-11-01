@@ -65,7 +65,6 @@ def transform_image(image_bytes):
         ]
     )
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-    image = image.transpose(method=Image.FLIP_LEFT_RIGHT)
     return transform(image).unsqueeze(0)
 
 def classificationTest(model, image):
@@ -135,7 +134,7 @@ def apiProcess(name_model):
 @app.route('/')
 @cross_origin(origin='*')
 def init():
-    return redirect('/')
+    return redirect('test/mobi-v2')
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=3000, host="0.0.0.0")
