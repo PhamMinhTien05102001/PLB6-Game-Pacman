@@ -10,7 +10,6 @@ export const Score = observer<{ className?: string }>(({ className }) => {
       <div className={classNames('Score', className)}>
         <span>Score</span>
         <span>{store.score}</span>
-        <span>{store.atePills}</span>
       </div>
     </>
   );

@@ -92,9 +92,9 @@ const eatPill = (tile: TileCoordinates, game: Game) => {
   game.score += BASIC_PILL_POINTS;
 };
 
-const MAX_POWER = 150;
+export const MAX_POWER = 150;
 const countPill = (tile: TileCoordinates, game: Game) => {
-  if (game.atePills < 150) {
+  if (game.atePills < MAX_POWER) {
     game.atePills += 1;
     game.power = game.atePills / MAX_POWER * 100;
   }
