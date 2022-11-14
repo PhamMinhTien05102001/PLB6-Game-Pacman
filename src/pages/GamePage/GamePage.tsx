@@ -60,9 +60,10 @@ export const GamePage: React.FC = observer(() => {
       </div>
       <Layout data-testid="GamePage">
         <ScoreArea>
-          <Row justify="center">
+          <Row justify="space-between" className="custom-row">
             <Score />
             <Progress />
+            <ExtraLives />
           </Row>
           <VSpace size="small" />
         </ScoreArea>
@@ -78,9 +79,6 @@ export const GamePage: React.FC = observer(() => {
             <GameOver />
           </Board>
           <VSpace size="large" />
-          <Row justify="center">
-            <ExtraLives />
-          </Row>
         </BoardArea>
 
         <WebcamGame

@@ -1,4 +1,4 @@
-import MapData from '../mapData/pacman6.json';
+import MapData from '../mapData/pacman6-v2.json';
 
 export type TileId = number;
 

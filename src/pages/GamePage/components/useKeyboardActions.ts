@@ -1,6 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useStore } from '../../../components/StoreContext';
 import { useGame } from '../../../components/StoreContext';
+import { MAX_POWER } from '../../../model/detectCollisions';
 
 /* eslint-disable  react-hooks/exhaustive-deps */
 export const useKeyboardActions = (): void => {
@@ -12,20 +13,20 @@ export const useKeyboardActions = (): void => {
     const pacMan = game.pacMan;
 
     switch (pressedKey) {
-      case 'ArrowLeft':
+      case 'a':
         pacMan.nextDirection = 'LEFT';
         break;
-      case 'ArrowRight':
+      case 'd':
         pacMan.nextDirection = 'RIGHT';
         break;
-      case 'ArrowUp':
+      case 'w':
         pacMan.nextDirection = 'UP';
         break;
-      case 'ArrowDown':
+      case 's':
         pacMan.nextDirection = 'DOWN';
         break;
-      case 'x':
-        if(game.atePills === 150){
+      case ' ':
+        if(game.atePills === MAX_POWER){
           game.killedGhosts = 0;
           game.pacMan.send('ENERGIZER_EATEN');
           for (const ghost of game.ghosts) {
@@ -34,7 +35,7 @@ export const useKeyboardActions = (): void => {
           game.atePills = 0;
         }
         break;
-      case ' ':
+      case 'p':
         game.gamePaused = !game.gamePaused;
         break;
       default:
