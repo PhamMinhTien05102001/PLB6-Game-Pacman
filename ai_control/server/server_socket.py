@@ -123,6 +123,7 @@ def createServer(conn, addr):
             except Exception as e:
                 error = "'Error': '" + str(e) + "'"
                 print(error)
+                conn.close()
             
     finally:
         conn.close()
