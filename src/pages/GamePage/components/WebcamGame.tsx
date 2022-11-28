@@ -1,12 +1,11 @@
 import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import styled from 'styled-components';
-import axios from 'axios';
 import './WebCam.css';
 import useWebSocket from 'react-use-websocket';
 import { Point } from 'react-easy-crop/types';
-import { API_URL_DEPLOY } from '../../../constant/index';
+
 import Cropper from 'react-easy-crop';
 import { Direction } from '../../../model/Types';
 import getCroppedImg from '../utils/cropImage';
@@ -41,47 +40,26 @@ const WebcamGame = observer(
     const [crop, setCrop] = useState<Point>({ x: -800, y: -500 });
     const webcamRef = useRef<any>(null);
 
-    const buttonRef = useRef<HTMLButtonElement>(null);
     const [gesture, setGesture] = useState<string>();
-    const [value, setvalue] = useState<string>('');
-    const { sendMessage } = useWebSocket(BackendUrl, {
-      onOpen: () => console.log('opened'),
-      onMessage(event) {
-        console.log('Message', event.data);
-      },
-    });
-    const gestureCount = {
-      Attack: 0,
-      Bottom: 0,
-      Left: 0,
-      Right: 0,
-      Stop: 0,
-      Top: 0,
-    };
-    // let camera = null;
-    const [imgSrc, setImgSrc] = useState<any>(null);
 
-    const sendMsg = () => {
-      sendMessage(value);
-    };
-    useEffect(() => {
-      const captureInterval = setInterval(() => {
-        buttonRef.current?.click();
-      }, captureConfig.timeCapture);
-      return () => clearInterval(captureInterval);
+    const gestureCount = useMemo(() => {
+      return {
+        Attack: 0,
+        Bottom: 0,
+        Left: 0,
+        Right: 0,
+        Stop: 0,
+        Top: 0,
+      };
     }, []);
 
-    const resetGestureCount = () => {
-      for (let i in gestureCount) {
-        gestureCount[i as gestureCount] = 0;
-      }
-    };
-
     const detectGesture = () => {
+      // console.log(gestureCount);
       for (let i in gestureCount) {
         if (gestureCount[i as gestureCount] >= captureConfig.acceptThreshold) {
           resetGestureCount();
           setGesture(i);
+
           if (i === 'Bottom') triggerDirection('DOWN');
           if (i === 'Left') triggerDirection('LEFT');
           if (i === 'Right') triggerDirection('RIGHT');
@@ -89,6 +67,35 @@ const WebcamGame = observer(
           if (i === 'Attack') triggerChaos();
           if (i === 'Stop') triggerGamePause();
         }
+      }
+    };
+    const { sendMessage } = useWebSocket(BackendUrl, {
+      onOpen: () => console.log('opened'),
+      onMessage(event) {
+        const jsonEvent = JSON.parse(event.data.replaceAll("'", '"'));
+
+        if (jsonEvent['Percent'] >= captureConfig.acceptPercent) {
+          // console.log(response.data['Class Name'], 'Plus one');
+          gestureCount[jsonEvent['Class Name'] as gestureCount] += 1;
+        }
+
+        detectGesture();
+      },
+    });
+
+    // let camera = null;
+    const [imgSrc, setImgSrc] = useState<any>(null);
+
+    useEffect(() => {
+      const captureInterval = setInterval(() => {
+        capture();
+      }, captureConfig.timeCapture);
+      return () => clearInterval(captureInterval);
+    }, []);
+
+    const resetGestureCount = () => {
+      for (let i in gestureCount) {
+        gestureCount[i as gestureCount] = 0;
       }
     };
 
@@ -104,31 +111,32 @@ const WebcamGame = observer(
 
       const form = new FormData();
       form.append('imageFile', imgCrop);
+      sendMessage(imgCrop);
       // console.log(imgCrop);
-      axios({
-        method: 'post',
-        url: API_URL_DEPLOY,
-        data: form,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Access-Control-Allow-Origin': '*',
-        },
-      })
-        .then(function(response: any) {
-          //handle success
+      // axios({
+      //   method: 'post',
+      //   url: API_URL_DEPLOY,
+      //   data: form,
+      //   headers: {
+      //     'Content-Type': 'multipart/form-data',
+      //     'Access-Control-Allow-Origin': '*',
+      //   },
+      // })
+      //   .then(function(response: any) {
+      //     //handle success
 
-          // console.log(response.data);
-          if (response.data['Percent'] >= captureConfig.acceptPercent) {
-            // console.log(response.data['Class Name'], 'Plus one');
-            gestureCount[response.data['Class Name'] as gestureCount] += 1;
-          }
+      //     // console.log(response.data);
+      //     if (response.data['Percent'] >= captureConfig.acceptPercent) {
+      //       // console.log(response.data['Class Name'], 'Plus one');
+      //       gestureCount[response.data['Class Name'] as gestureCount] += 1;
+      //     }
 
-          detectGesture();
-          // setGesture(response.data['Class Name']);
-        })
-        .catch(function(response) {
-          console.log(response);
-        });
+      //     detectGesture();
+      //     // setGesture(response.data['Class Name']);
+      //   })
+      //   .catch(function(response) {
+      //     console.log(response);
+      //   });
     }, [webcamRef, setImgSrc]);
 
     return (
@@ -146,21 +154,7 @@ const WebcamGame = observer(
           />
         </div>
         <p style={{ color: 'white' }}>{gesture}</p>
-        <input
-          type="text"
-          style={{ color: 'black' }}
-          onChange={(e: any) => {
-            setvalue(e.target.value);
-          }}
-        />
-        <button
-          onClick={() => {
-            sendMsg();
-          }}
-          // ref={buttonRef}
-        >
-          Capture Image
-        </button>
+
         {imgSrc && (
           <Cropper
             image={imgSrc}
