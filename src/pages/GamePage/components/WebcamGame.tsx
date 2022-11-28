@@ -4,9 +4,7 @@ import Webcam from 'react-webcam';
 import styled from 'styled-components';
 import axios from 'axios';
 import './WebCam.css';
-// import { Hands } from '@mediapipe/hands';
-// import * as hands from '@mediapipe/hands';
-// import { Camera } from '@mediapipe/camera_utils';
+import useWebSocket from 'react-use-websocket';
 import { Point } from 'react-easy-crop/types';
 import { API_URL_DEPLOY } from '../../../constant/index';
 import Cropper from 'react-easy-crop';
@@ -26,23 +24,9 @@ const captureConfig = {
   acceptThreshold: 2,
   acceptPercent: 90,
 };
-// interface FingerCors {
-//   x: number;
-//   y: number;
-//   z: number;
-//   visibility: any;
-// }
-type gestureCount = 'Attack' | 'Bottom' | 'Left' | 'Right' | 'Stop' | 'Top';
+const BackendUrl = 'ws://128.199.251.61:5001/';
 
-// const detectHandInBox = (finger: any) => {
-//   if (!finger) return false;
-//   for (let i = 0; i < finger.length; i++) {
-//     if (finger[i].x > 0.3 || finger[i].y > 0.4) {
-//       return false;
-//     }
-//   }
-//   return true;
-// };
+type gestureCount = 'Attack' | 'Bottom' | 'Left' | 'Right' | 'Stop' | 'Top';
 
 const WebcamGame = observer(
   ({
@@ -59,7 +43,13 @@ const WebcamGame = observer(
 
     const buttonRef = useRef<HTMLButtonElement>(null);
     const [gesture, setGesture] = useState<string>();
-    // const [countHandInBox, setCountHandInBox] = useState<number>(0);
+    const [value, setvalue] = useState<string>('');
+    const { sendMessage } = useWebSocket(BackendUrl, {
+      onOpen: () => console.log('opened'),
+      onMessage(event) {
+        console.log('Message', event.data);
+      },
+    });
     const gestureCount = {
       Attack: 0,
       Bottom: 0,
@@ -70,6 +60,16 @@ const WebcamGame = observer(
     };
     // let camera = null;
     const [imgSrc, setImgSrc] = useState<any>(null);
+
+    const sendMsg = () => {
+      sendMessage(value);
+    };
+    useEffect(() => {
+      const captureInterval = setInterval(() => {
+        buttonRef.current?.click();
+      }, captureConfig.timeCapture);
+      return () => clearInterval(captureInterval);
+    }, []);
 
     const resetGestureCount = () => {
       for (let i in gestureCount) {
@@ -91,58 +91,6 @@ const WebcamGame = observer(
         }
       }
     };
-
-    // const onResults = (results: any) => {
-    //   // console.log(results);
-    //   setCountHandInBox(val => val + 1);
-
-    //   // if (countHandInBox === 5) {
-    //   //   setCountHandInBox(0);
-    //   //   console.log('Detect hand in box equal 5 and reset');
-    //   // }
-    // };
-
-    useEffect(() => {
-      const captureInterval = setInterval(() => {
-        buttonRef.current?.click();
-      }, captureConfig.timeCapture);
-      return () => clearInterval(captureInterval);
-    }, []);
-
-    // useEffect(() => {
-    //   const hands = new Hands({
-    //     locateFile: file => {
-    //       return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-    //     },
-    //   });
-    //   hands.setOptions({
-    //     maxNumHands: 1,
-    //     modelComplexity: 1,
-    //     minDetectionConfidence: 0.5,
-    //     minTrackingConfidence: 0.5,
-    //   });
-
-    //   hands.onResults(hand => {
-    //     // console.log(detectHandInBox(hand.multiHandLandmarks[0]));
-    //     if (detectHandInBox(hand.multiHandLandmarks[0])) {
-    //       onResults(hand);
-    //     }
-    //   });
-
-    //   if (
-    //     typeof webcamRef.current !== 'undefined' &&
-    //     webcamRef.current !== null
-    //   ) {
-    //     camera = new Camera(webcamRef.current.video, {
-    //       onFrame: async () => {
-    //         await hands.send({ image: webcamRef.current.video });
-    //       },
-    //       width: 800,
-    //       height: 600,
-    //     });
-    //     camera.start();
-    //   }
-    // }, []);
 
     const capture = useCallback(async () => {
       const imageSrc = webcamRef.current.getScreenshot({});
@@ -198,7 +146,19 @@ const WebcamGame = observer(
           />
         </div>
         <p style={{ color: 'white' }}>{gesture}</p>
-        <button onClick={capture} style={{ display: 'none' }} ref={buttonRef}>
+        <input
+          type="text"
+          style={{ color: 'black' }}
+          onChange={(e: any) => {
+            setvalue(e.target.value);
+          }}
+        />
+        <button
+          onClick={() => {
+            sendMsg();
+          }}
+          // ref={buttonRef}
+        >
           Capture Image
         </button>
         {imgSrc && (
@@ -234,3 +194,64 @@ const Layout = styled.div`
   flex-wrap: wrap;
 `;
 export default WebcamGame;
+
+// const onResults = (results: any) => {
+//   // console.log(results);
+//   setCountHandInBox(val => val + 1);
+
+//   // if (countHandInBox === 5) {
+//   //   setCountHandInBox(0);
+//   //   console.log('Detect hand in box equal 5 and reset');
+//   // }
+// };
+
+// useEffect(() => {
+//   const hands = new Hands({
+//     locateFile: file => {
+//       return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+//     },
+//   });
+//   hands.setOptions({
+//     maxNumHands: 1,
+//     modelComplexity: 1,
+//     minDetectionConfidence: 0.5,
+//     minTrackingConfidence: 0.5,
+//   });
+
+//   hands.onResults(hand => {
+//     // console.log(detectHandInBox(hand.multiHandLandmarks[0]));
+//     if (detectHandInBox(hand.multiHandLandmarks[0])) {
+//       onResults(hand);
+//     }
+//   });
+
+//   if (
+//     typeof webcamRef.current !== 'undefined' &&
+//     webcamRef.current !== null
+//   ) {
+//     camera = new Camera(webcamRef.current.video, {
+//       onFrame: async () => {
+//         await hands.send({ image: webcamRef.current.video });
+//       },
+//       width: 800,
+//       height: 600,
+//     });
+//     camera.start();
+//   }
+// }, []);
+// const detectHandInBox = (finger: any) => {
+//   if (!finger) return false;
+//   for (let i = 0; i < finger.length; i++) {
+//     if (finger[i].x > 0.3 || finger[i].y > 0.4) {
+//       return false;
+//     }
+//   }
+//   return true;
+// };
+
+// interface FingerCors {
+//   x: number;
+//   y: number;
+//   z: number;
+//   visibility: any;
+// }
