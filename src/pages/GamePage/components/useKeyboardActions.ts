@@ -25,6 +25,12 @@ export const useKeyboardActions = (playByCamera: boolean): void => {
       case 's':
         pacMan.nextDirection = 'DOWN';
         break;
+      case 'x':
+        game.pacMan.send('ENERGIZER_EATEN');
+        for (const ghost of game.ghosts) {
+          ghost.send('ENERGIZER_EATEN');
+        }
+        break;
       case ' ':
         if (game.atePills === MAX_POWER) {
           game.killedGhosts = 0;

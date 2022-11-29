@@ -1,7 +1,7 @@
 import { Game } from './Game';
 import { action } from 'mobx';
 
-export const ENERGIZER_POINTS = 30;
+export const ENERGIZER_POINTS = 10;
 
 export const eatEnergizer = action((game: Game) => {
   game.score += ENERGIZER_POINTS;
