@@ -13,8 +13,9 @@ const MessageStyled = styled.span`
   font-size: 24px;
   color: yellow;
   position: absolute;
-  left: 170px;
-  top: 332px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: 220px;
   text-align: center;
 `;

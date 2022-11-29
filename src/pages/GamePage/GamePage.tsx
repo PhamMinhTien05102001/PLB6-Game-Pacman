@@ -21,6 +21,7 @@ import './GamePage.css';
 import { useState } from 'react';
 import { Switch } from 'antd';
 import { Progress } from './components/Progress';
+import { GameWin } from './components/GameWin';
 
 export const GamePage: React.FC = observer(() => {
   const store = useStore();
@@ -94,6 +95,7 @@ export const GamePage: React.FC = observer(() => {
             <PacManView />
             <GhostsGameView />
             <GameOver />
+            <GameWin />
           </Board>
           <VSpace size="large" />
         </BoardArea>
