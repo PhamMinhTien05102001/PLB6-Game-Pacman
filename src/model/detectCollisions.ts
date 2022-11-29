@@ -77,6 +77,7 @@ const eatPillLayerObject = (tile: TileCoordinates, game: Game) => {
     case BASIC_PILL_ID:
       eatPill(tile, game);
       countPill(tile, game);
+      countAtePills(tile, game);
       break;
     case ENERGIZER_ID:
       eatEnergizer(game);
@@ -96,10 +97,14 @@ const eatPill = (tile: TileCoordinates, game: Game) => {
 export const MAX_POWER = 150;
 const countPill = (tile: TileCoordinates, game: Game) => {
   if (game.atePills < MAX_POWER) {
-    game.atePills += 1;
+    game.atePills += 1;;
     game.power = (game.atePills / MAX_POWER) * 100;
   }
 };
+
+const countAtePills = (tile: TileCoordinates, game: Game) => {
+   game.pillsCount += 1;
+}
 
 const detectGhostCollisions = (game: Game) => {
   const pacManHitBox: Rectangle = getPacManHitBox(

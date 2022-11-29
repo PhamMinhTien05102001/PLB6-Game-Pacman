@@ -49,6 +49,9 @@ export class Game {
   atePills = 0;
 
   @observable
+  pillsCount = 0;
+
+  @observable
   power = 0;
 
   @observable
