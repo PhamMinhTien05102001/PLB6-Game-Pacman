@@ -19,7 +19,7 @@ const videoConstraints = {
 const captureConfig = {
   width: 300,
   height: 300,
-  timeCapture: 500,
+  timeCapture: 400,
   acceptThreshold: 1,
   acceptPercent: 90,
 };
