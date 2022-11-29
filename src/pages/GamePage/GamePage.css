@@ -1,0 +1,16 @@
+.layout {
+  margin-left: 16px;
+  margin-right: 16px;
+
+  display: grid;
+}
+@media (min-width: 1280px) {
+  .layout-keyboard {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+  .layout-camera {
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+  }
+}
