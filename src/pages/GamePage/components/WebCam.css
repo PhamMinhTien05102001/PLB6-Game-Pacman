@@ -3,3 +3,25 @@
   /* visibility: hidden; */
   z-index: -10;
 }
+.video-fallback {
+  filter: brightness(0.5);
+}
+.btn-video {
+  --bg-color: rgb(62, 145, 247);
+  position: absolute;
+  z-index: 20;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  font-size: 2rem;
+  padding: 5px 10px;
+  cursor: pointer;
+  background: var(--bg-color);
+  transition: all 0.2s ease-in;
+  border: none;
+}
+.btn-video:hover {
+  --bg-color: rgb(43, 135, 249);
+  background: var(--bg-color);
+}

@@ -1,17 +1,15 @@
 import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import styled from 'styled-components';
-import axios from 'axios';
 import './WebCam.css';
-// import { Hands } from '@mediapipe/hands';
-// import * as hands from '@mediapipe/hands';
-// import { Camera } from '@mediapipe/camera_utils';
+import useWebSocket from 'react-use-websocket';
 import { Point } from 'react-easy-crop/types';
-import { API_URL_DEPLOY } from '../../../constant/index';
+
 import Cropper from 'react-easy-crop';
 import { Direction } from '../../../model/Types';
 import getCroppedImg from '../utils/cropImage';
+import { useStore } from '../../../components/StoreContext';
 
 const videoConstraints = {
   width: 800,
@@ -22,27 +20,16 @@ const videoConstraints = {
 const captureConfig = {
   width: 300,
   height: 300,
-  timeCapture: 1000,
-  acceptThreshold: 2,
+  timeCapture: {
+    low: 600,
+    fast: 400,
+  },
+  acceptThreshold: 1,
   acceptPercent: 90,
 };
-// interface FingerCors {
-//   x: number;
-//   y: number;
-//   z: number;
-//   visibility: any;
-// }
-type gestureCount = 'Attack' | 'Bottom' | 'Left' | 'Right' | 'Stop' | 'Top';
+const BackendUrl = 'ws://128.199.251.61:5001/';
 
-// const detectHandInBox = (finger: any) => {
-//   if (!finger) return false;
-//   for (let i = 0; i < finger.length; i++) {
-//     if (finger[i].x > 0.3 || finger[i].y > 0.4) {
-//       return false;
-//     }
-//   }
-//   return true;
-// };
+type gestureCount = 'Attack' | 'Bottom' | 'Left' | 'Right' | 'Stop' | 'Top';
 
 const WebcamGame = observer(
   ({
@@ -56,32 +43,28 @@ const WebcamGame = observer(
   }) => {
     const [crop, setCrop] = useState<Point>({ x: -800, y: -500 });
     const webcamRef = useRef<any>(null);
-
-    const buttonRef = useRef<HTMLButtonElement>(null);
+    const [timeReq, setTimeReq] = useState<any>();
     const [gesture, setGesture] = useState<string>();
-    // const [countHandInBox, setCountHandInBox] = useState<number>(0);
-    const gestureCount = {
-      Attack: 0,
-      Bottom: 0,
-      Left: 0,
-      Right: 0,
-      Stop: 0,
-      Top: 0,
-    };
-    // let camera = null;
-    const [imgSrc, setImgSrc] = useState<any>(null);
+    const store = useStore();
 
-    const resetGestureCount = () => {
-      for (let i in gestureCount) {
-        gestureCount[i as gestureCount] = 0;
-      }
-    };
+    const gestureCount = useMemo(() => {
+      return {
+        Attack: 0,
+        Bottom: 0,
+        Left: 0,
+        Right: 0,
+        Stop: 0,
+        Top: 0,
+      };
+    }, []);
 
     const detectGesture = () => {
+      // console.log(gestureCount);
       for (let i in gestureCount) {
         if (gestureCount[i as gestureCount] >= captureConfig.acceptThreshold) {
           resetGestureCount();
           setGesture(i);
+
           if (i === 'Bottom') triggerDirection('DOWN');
           if (i === 'Left') triggerDirection('LEFT');
           if (i === 'Right') triggerDirection('RIGHT');
@@ -91,59 +74,51 @@ const WebcamGame = observer(
         }
       }
     };
+    const { sendMessage } = useWebSocket(BackendUrl, {
+      onOpen: () => console.log('opened'),
+      onMessage(event) {
+        const timeRes = Date.now();
+        console.log('New response message');
+        console.log('Total time', timeRes - timeReq);
 
-    // const onResults = (results: any) => {
-    //   // console.log(results);
-    //   setCountHandInBox(val => val + 1);
+        const jsonEvent = JSON.parse(event.data.replaceAll("'", '"'));
+        console.log('Time backend', jsonEvent['Time']);
+        console.log(
+          'Time reponse not include Backend',
+          timeRes - timeReq - jsonEvent['Time'] * 1000
+        );
 
-    //   // if (countHandInBox === 5) {
-    //   //   setCountHandInBox(0);
-    //   //   console.log('Detect hand in box equal 5 and reset');
-    //   // }
-    // };
+        if (jsonEvent['Percent'] >= captureConfig.acceptPercent) {
+          // console.log(response.data['Class Name'], 'Plus one');
+          gestureCount[jsonEvent['Class Name'] as gestureCount] += 1;
+        }
+        detectGesture();
+      },
+    });
+
+    const [imgSrc, setImgSrc] = useState<any>(null);
 
     useEffect(() => {
-      const captureInterval = setInterval(() => {
-        buttonRef.current?.click();
-      }, captureConfig.timeCapture);
+      const captureInterval = setInterval(
+        () => {
+          capture();
+        },
+        store.game.speed === 2
+          ? captureConfig.timeCapture.fast
+          : captureConfig.timeCapture.low
+      );
       return () => clearInterval(captureInterval);
-    }, []);
+    }, [store.game.speed]);
 
-    // useEffect(() => {
-    //   const hands = new Hands({
-    //     locateFile: file => {
-    //       return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-    //     },
-    //   });
-    //   hands.setOptions({
-    //     maxNumHands: 1,
-    //     modelComplexity: 1,
-    //     minDetectionConfidence: 0.5,
-    //     minTrackingConfidence: 0.5,
-    //   });
+    const resetGestureCount = () => {
+      for (let i in gestureCount) {
+        gestureCount[i as gestureCount] = 0;
+      }
+    };
 
-    //   hands.onResults(hand => {
-    //     // console.log(detectHandInBox(hand.multiHandLandmarks[0]));
-    //     if (detectHandInBox(hand.multiHandLandmarks[0])) {
-    //       onResults(hand);
-    //     }
-    //   });
-
-    //   if (
-    //     typeof webcamRef.current !== 'undefined' &&
-    //     webcamRef.current !== null
-    //   ) {
-    //     camera = new Camera(webcamRef.current.video, {
-    //       onFrame: async () => {
-    //         await hands.send({ image: webcamRef.current.video });
-    //       },
-    //       width: 800,
-    //       height: 600,
-    //     });
-    //     camera.start();
-    //   }
-    // }, []);
-
+    const onContinue = () => {
+      store.game.gamePaused = false;
+    };
     const capture = useCallback(async () => {
       const imageSrc = webcamRef.current.getScreenshot({});
       setImgSrc(imageSrc);
@@ -153,54 +128,35 @@ const WebcamGame = observer(
         x: videoConstraints.width - captureConfig.width,
         y: videoConstraints.height - captureConfig.height,
       });
-
       const form = new FormData();
       form.append('imageFile', imgCrop);
-      // console.log(imgCrop);
-      axios({
-        method: 'post',
-        url: API_URL_DEPLOY,
-        data: form,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Access-Control-Allow-Origin': '*',
-        },
-      })
-        .then(function(response: any) {
-          //handle success
+      setTimeReq(Date.now());
 
-          // console.log(response.data);
-          if (response.data['Percent'] >= captureConfig.acceptPercent) {
-            // console.log(response.data['Class Name'], 'Plus one');
-            gestureCount[response.data['Class Name'] as gestureCount] += 1;
-          }
-
-          detectGesture();
-          // setGesture(response.data['Class Name']);
-        })
-        .catch(function(response) {
-          console.log(response);
-        });
+      sendMessage(imgCrop);
     }, [webcamRef, setImgSrc]);
 
     return (
       <Layout>
         <div className="my-video" style={{ position: 'relative' }}>
           <CaptureFrame />
+          {store.game.gamePaused ? (
+            <button className="btn-video" onClick={onContinue}>
+              Continue
+            </button>
+          ) : null}
           <Webcam
             audio={false}
             width={800}
             height={600}
             ref={webcamRef}
             screenshotFormat="image/png"
+            className={store.game.gamePaused ? 'video-fallback' : ''}
             mirrored={true}
             videoConstraints={videoConstraints}
           />
         </div>
         <p style={{ color: 'white' }}>{gesture}</p>
-        <button onClick={capture} style={{ display: 'none' }} ref={buttonRef}>
-          Capture Image
-        </button>
+
         {imgSrc && (
           <Cropper
             image={imgSrc}
@@ -234,3 +190,64 @@ const Layout = styled.div`
   flex-wrap: wrap;
 `;
 export default WebcamGame;
+
+// const onResults = (results: any) => {
+//   // console.log(results);
+//   setCountHandInBox(val => val + 1);
+
+//   // if (countHandInBox === 5) {
+//   //   setCountHandInBox(0);
+//   //   console.log('Detect hand in box equal 5 and reset');
+//   // }
+// };
+
+// useEffect(() => {
+//   const hands = new Hands({
+//     locateFile: file => {
+//       return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+//     },
+//   });
+//   hands.setOptions({
+//     maxNumHands: 1,
+//     modelComplexity: 1,
+//     minDetectionConfidence: 0.5,
+//     minTrackingConfidence: 0.5,
+//   });
+
+//   hands.onResults(hand => {
+//     // console.log(detectHandInBox(hand.multiHandLandmarks[0]));
+//     if (detectHandInBox(hand.multiHandLandmarks[0])) {
+//       onResults(hand);
+//     }
+//   });
+
+//   if (
+//     typeof webcamRef.current !== 'undefined' &&
+//     webcamRef.current !== null
+//   ) {
+//     camera = new Camera(webcamRef.current.video, {
+//       onFrame: async () => {
+//         await hands.send({ image: webcamRef.current.video });
+//       },
+//       width: 800,
+//       height: 600,
+//     });
+//     camera.start();
+//   }
+// }, []);
+// const detectHandInBox = (finger: any) => {
+//   if (!finger) return false;
+//   for (let i = 0; i < finger.length; i++) {
+//     if (finger[i].x > 0.3 || finger[i].y > 0.4) {
+//       return false;
+//     }
+//   }
+//   return true;
+// };
+
+// interface FingerCors {
+//   x: number;
+//   y: number;
+//   z: number;
+//   visibility: any;
+// }

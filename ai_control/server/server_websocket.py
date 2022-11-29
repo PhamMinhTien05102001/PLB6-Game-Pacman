@@ -1,11 +1,8 @@
-from flask import Flask, redirect
-from flask_cors import cross_origin
-from flask import request
-from flask import render_template, jsonify
+import asyncio
+import websockets
 import numpy as np
 import base64
 from PIL import Image
-from io import BytesIO
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -89,23 +86,6 @@ def classificationApi(model, image):
     top_p, top_class = prob.topk(1, dim = 1)
     return Labels[pre.item()], top_p.item()
 
-app = Flask(__name__)
-
-@app.route('/test/<name_model>', methods=['GET', 'POST'])
-@cross_origin(origin='*')
-def mainpage(name_model):   
-    if request.method == 'POST':
-        imageFile = request.files['imagefile']  # get file
-        image_b64 = base64.b64encode(imageFile.read()).decode('utf-8')
-        image=Image.open(BytesIO(base64.b64decode(image_b64)))
-        image = np.array(image)
-
-        model = pretrain_model(name_model)
-        prediction, percent = classificationTest(model, image)
-
-        return render_template('index.html', name_model=name_model, prediction=prediction, percent=percent) 
-    return render_template('index.html', name_model=name_model)
-
 def chuyen_base64_sang_anh(anh_base64):
     try:
         anh_base64 = np.frombuffer(
@@ -114,27 +94,35 @@ def chuyen_base64_sang_anh(anh_base64):
         return None
     return anh_base64
 
-@app.route('/api/<name_model>', methods=['GET', 'POST'])
-@cross_origin(origin='*')
-def apiProcess(name_model):   
-    if request.method == 'POST':
-        try:
-            imageFile = request.form.get("imageFile").split(',')[1]  # get file
-            image = chuyen_base64_sang_anh(imageFile)
-            model = pretrain_model(name_model)
-            prediction, percent = classificationApi(model, image)
-            data = {'Class Name': prediction, 'Percent': percent*100}
-            print(data)
-            return jsonify(data)
-        except Exception as e:
-            error = "'Error': '" + str(e) + "'"
-            print(error)
-            return jsonify({'Error': str(e)})
+connected = set()
 
-@app.route('/')
-@cross_origin(origin='*')
-def init():
-    return redirect('test/mobi-v2')
+async def server(websocket, path):
+    # Register.
+    connected.add(websocket)
+    print("ws", websocket)
+    try:
+        async for message in websocket:
+            for conn in connected:
+                if conn == websocket:
+                    try:
+                        imageFile = message.split(',')[1]
+                        image = chuyen_base64_sang_anh(imageFile)
+                        model = pretrain_model('mobi-v2')
+                        prediction, percent = classificationApi(model, image)
+                        data = str({'Class Name': prediction, 'Percent': percent*100})
+                        await conn.send(data)
+                        print(data)
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5000, host="0.0.0.0")
+                    except Exception as e:
+                        error = "'Error': '" + str(e) + "'"
+                        conn.send(error)
+                        print(error)
+    finally:
+        # Unregister.
+        connected.remove(websocket)
+    
+
+start_server = websockets.serve(server, "0.0.0.0", 5001)
+
+asyncio.get_event_loop().run_until_complete(start_server)
+asyncio.get_event_loop().run_forever()

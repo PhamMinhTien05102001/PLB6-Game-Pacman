@@ -12,6 +12,8 @@ import torch.nn.functional as F
 from torchvision import transforms, models
 import PIL
 import io
+import socket
+import threading
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
@@ -89,23 +91,6 @@ def classificationApi(model, image):
     top_p, top_class = prob.topk(1, dim = 1)
     return Labels[pre.item()], top_p.item()
 
-app = Flask(__name__)
-
-@app.route('/test/<name_model>', methods=['GET', 'POST'])
-@cross_origin(origin='*')
-def mainpage(name_model):   
-    if request.method == 'POST':
-        imageFile = request.files['imagefile']  # get file
-        image_b64 = base64.b64encode(imageFile.read()).decode('utf-8')
-        image=Image.open(BytesIO(base64.b64decode(image_b64)))
-        image = np.array(image)
-
-        model = pretrain_model(name_model)
-        prediction, percent = classificationTest(model, image)
-
-        return render_template('index.html', name_model=name_model, prediction=prediction, percent=percent) 
-    return render_template('index.html', name_model=name_model)
-
 def chuyen_base64_sang_anh(anh_base64):
     try:
         anh_base64 = np.frombuffer(
@@ -114,27 +99,44 @@ def chuyen_base64_sang_anh(anh_base64):
         return None
     return anh_base64
 
-@app.route('/api/<name_model>', methods=['GET', 'POST'])
-@cross_origin(origin='*')
-def apiProcess(name_model):   
-    if request.method == 'POST':
-        try:
-            imageFile = request.form.get("imageFile").split(',')[1]  # get file
-            image = chuyen_base64_sang_anh(imageFile)
-            model = pretrain_model(name_model)
-            prediction, percent = classificationApi(model, image)
-            data = {'Class Name': prediction, 'Percent': percent*100}
-            print(data)
-            return jsonify(data)
-        except Exception as e:
-            error = "'Error': '" + str(e) + "'"
-            print(error)
-            return jsonify({'Error': str(e)})
 
-@app.route('/')
-@cross_origin(origin='*')
-def init():
-    return redirect('test/mobi-v2')
+def createServer(conn, addr):
+    print("connected to client: ", addr)
+    try:
+        name_model = conn.recv(1024).decode()
+        print(name_model)
+        while True:
+            contentClient = conn.recv(409600).decode()
+            if(contentClient == 'quit'):
+                conn.close()
+                break
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5000, host="0.0.0.0")
+            try:
+                imageFile = contentClient.split(',')[1]
+                image = chuyen_base64_sang_anh(imageFile)
+                model = pretrain_model(name_model)
+                prediction, percent = classificationApi(model, image)
+                data = str({'Class Name': prediction, 'Percent': percent*100})
+                print(data)
+                conn.sendall(data.encode())
+
+            except Exception as e:
+                error = "'Error': '" + str(e) + "'"
+                print(error)
+                conn.close()
+            
+    finally:
+        conn.close()
+
+PORT = 51001
+HOST_NAME = socket.gethostname()
+HOST_ADDRESS = socket.gethostbyname(HOST_NAME)
+print(HOST_NAME, HOST_ADDRESS)
+soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+soc.bind((HOST_ADDRESS, PORT))
+
+while True:
+    soc.listen(5)
+    conn, addr = soc.accept()
+    t = threading.Thread(target=createServer, args=(conn, addr, ))
+    t.start()

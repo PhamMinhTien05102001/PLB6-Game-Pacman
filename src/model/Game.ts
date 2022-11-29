@@ -7,7 +7,7 @@ import { MilliSeconds, PixelsPerFrame } from './Types';
 import { Store } from './Store';
 import { TimeoutTimer } from './TimeoutTimer';
 
-export const DEFAULT_SPEED = 2;
+export const DEFAULT_SPEED = 1;
 
 const ENERGIZER_DURATION: MilliSeconds = 5000;
 
