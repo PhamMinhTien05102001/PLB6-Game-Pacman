@@ -4,7 +4,7 @@ import { useStore } from '../../../components/StoreContext';
 import { MAX_POWER } from '../../../model/detectCollisions';
 
 /* eslint-disable  react-hooks/exhaustive-deps */
-export const useKeyboardActions = (): void => {
+export const useKeyboardActions = (playByCamera: boolean): void => {
   const store = useStore();
 
   const onKeyDown = useCallback((event: KeyboardEvent) => {
@@ -35,6 +35,17 @@ export const useKeyboardActions = (): void => {
           game.atePills = 0;
         }
         break;
+
+      default:
+        break;
+    }
+  }, []);
+
+  const onPause = useCallback((event: KeyboardEvent) => {
+    const { game } = store;
+    const pressedKey = event.key;
+
+    switch (pressedKey) {
       case 'p':
         game.gamePaused = !game.gamePaused;
         break;
@@ -44,10 +55,15 @@ export const useKeyboardActions = (): void => {
   }, []);
 
   useEffect(() => {
-    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keydown', onPause);
+    if (!playByCamera) {
+      window.addEventListener('keydown', onKeyDown);
+    } else {
+      window.removeEventListener('keydown', onKeyDown);
+    }
 
     return () => {
       window.removeEventListener('keydown', onKeyDown);
     };
-  }, []);
+  }, [playByCamera]);
 };

@@ -17,14 +17,15 @@ import { VSpace } from '../../components/Spacer';
 import { useGameLoop } from '../../model/useGameLoop';
 import WebcamGame from './components/WebcamGame';
 import { Direction } from '../../model/Types';
-// import { Switch } from 'react-router-dom';
+import './GamePage.css';
 import { useState } from 'react';
 import { Switch } from 'antd';
 import { Progress } from './components/Progress';
 
 export const GamePage: React.FC = observer(() => {
   const store = useStore();
-
+  const [hide, setHide] = useState(false);
+  const [cameraOn, setCameraOn] = useState(true);
   useEffect(() => {
     store.resetGame();
     return () => {
@@ -46,19 +47,34 @@ export const GamePage: React.FC = observer(() => {
     store.game.gamePaused = true;
   };
   useGameLoop();
-  useKeyboardActions();
+  useKeyboardActions(cameraOn);
 
-  const [hide, setHide] = useState(false);
+  const toggleCamera = () => {
+    setCameraOn(!cameraOn);
+  };
   const toggleHide = () => {
     setHide(!hide);
   };
   return (
     <>
       <div className="debugbar-toggle-wrap">
-        Show Debug Bar
-        <Switch onClick={toggleHide} className="debugbar-toggle" />
+        <div>
+          Play by Camera
+          <Switch
+            onClick={toggleCamera}
+            className="debugbar-toggle"
+            defaultChecked
+          />
+        </div>
+        <div>
+          Show Debug Bar
+          <Switch onClick={toggleHide} className="debugbar-toggle" />
+        </div>
       </div>
-      <Layout data-testid="GamePage">
+      <div
+        data-testid="GamePage"
+        className={`layout ${cameraOn ? 'layout-camera' : 'layout-keyboard'}`}
+      >
         <ScoreArea>
           <Row justify="space-between" className="custom-row">
             <Score />
@@ -81,12 +97,14 @@ export const GamePage: React.FC = observer(() => {
           <VSpace size="large" />
         </BoardArea>
 
-        <WebcamGame
-          triggerDirection={triggerDirection}
-          triggerGamePause={triggerGamePause}
-          triggerChaos={triggerChaos}
-        />
-      </Layout>
+        {cameraOn ? (
+          <WebcamGame
+            triggerDirection={triggerDirection}
+            triggerGamePause={triggerGamePause}
+            triggerChaos={triggerChaos}
+          />
+        ) : null}
+      </div>
       <div
         className="debugbar-wrap"
         style={{ display: hide ? 'flex' : 'none' }}
@@ -98,18 +116,6 @@ export const GamePage: React.FC = observer(() => {
     </>
   );
 });
-
-const Layout = styled.div`
-  margin-left: 16px;
-  margin-right: 16px;
-
-  display: grid;
-
-  @media (min-width: 1280px) {
-    grid-template-columns: 1fr 1fr;
-    justify-items: center;
-  }
-`;
 
 const ScoreArea = styled.div``;
 

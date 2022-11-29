@@ -4,32 +4,36 @@
   height: calc(31 * var(--SCREEN_TILE_SIZE));
   overflow: hidden;
 }
-.debugbar-wrap{
+.debugbar-wrap {
   justify-content: center;
   padding-bottom: 30px;
 }
 
-.debugbar-toggle-wrap{
+.debugbar-toggle-wrap {
   margin-bottom: 0;
   padding-right: 0;
   padding-left: 0;
   height: 80%;
   position: relative;
+  width: 100%;
+
   top: -40px;
-  left: 90%;
-  margin-right: 150px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
 }
 
-.debugbar-toggle{
+.debugbar-toggle {
   margin-left: 10px;
+  float: right;
 }
-.debugbar-toggle.ant-switch{
-      background-color: rgb(205 205 205) ;
+.debugbar-toggle.ant-switch {
+  background-color: rgb(205 205 205);
 }
-.debugbar-toggle.ant-switch.ant-switch-checked{
+.debugbar-toggle.ant-switch.ant-switch-checked {
   background-color: #1890ff !important;
 }
 
-.custom-row{
+.custom-row {
   width: calc(28 * var(--SCREEN_TILE_SIZE));
 }
