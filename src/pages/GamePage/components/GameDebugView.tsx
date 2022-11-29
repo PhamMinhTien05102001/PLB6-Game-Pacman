@@ -19,11 +19,12 @@ export const GameDebugView = observer<{ className?: string }>(
     const store = useStore();
     const game = useGame();
 
-    const [value, setValue] = useState(1);
+    const [value, setValue] = useState<any>(game.speed);
 
     const onSpeedChange = ({ target: { value } }: RadioChangeEvent) => {
+      localStorage.setItem('GAMESPEED', value);
       setValue(value);
-      store.game.speed = value;
+      window.location.reload();
     };
     return (
       <Layout className="PacManDebugView">

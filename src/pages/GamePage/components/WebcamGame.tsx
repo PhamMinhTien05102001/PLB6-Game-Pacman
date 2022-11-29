@@ -86,14 +86,14 @@ const WebcamGame = observer(
       onMessage(event) {
         const timeRes = Date.now();
         const jsonEvent = JSON.parse(event.data.replaceAll("'", '"'));
-        console.log('New response message');
-        console.log('Total time', timeRes - timeReq);
+        // console.log('New response message');
+        // console.log('Total time', timeRes - timeReq);
 
-        console.log('Time backend', jsonEvent['Time']);
-        console.log(
-          'Time reponse not include Backend',
-          timeRes - timeReq - jsonEvent['Time'] * 1000
-        );
+        // console.log('Time backend', jsonEvent['Time']);
+        // console.log(
+        //   'Time reponse not include Backend',
+        //   timeRes - timeReq - jsonEvent['Time'] * 1000
+        // );
 
         if (jsonEvent['Percent'] >= captureConfig.acceptPercent) {
           // console.log(response.data['Class Name'], 'Plus one');

@@ -53,7 +53,9 @@ export const getGhostHitBox = (screen: ScreenCoordinates): Rectangle => {
 
 const detectPacManEatingPill = (game: Game) => {
   const pillTile = game.pacMan.tileCoordinates;
+  // console.log(pillTile.x, pillTile.y);
   const pill: TileId = game.maze.pills[pillTile.y][pillTile.x];
+
   if (pill === EMPTY_TILE_ID) {
     return;
   }
@@ -87,7 +89,6 @@ const eatPillLayerObject = (tile: TileCoordinates, game: Game) => {
   game.maze.pills[tile.y][tile.x] = EMPTY_TILE_ID;
 };
 
-
 const eatPill = (tile: TileCoordinates, game: Game) => {
   game.score += BASIC_PILL_POINTS;
 };
@@ -96,9 +97,9 @@ export const MAX_POWER = 150;
 const countPill = (tile: TileCoordinates, game: Game) => {
   if (game.atePills < MAX_POWER) {
     game.atePills += 1;
-    game.power = game.atePills / MAX_POWER * 100;
+    game.power = (game.atePills / MAX_POWER) * 100;
   }
-}
+};
 
 const detectGhostCollisions = (game: Game) => {
   const pacManHitBox: Rectangle = getPacManHitBox(
