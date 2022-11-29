@@ -20,7 +20,7 @@ const captureConfig = {
   width: 300,
   height: 300,
   timeCapture: 500,
-  acceptThreshold: 2,
+  acceptThreshold: 1,
   acceptPercent: 90,
 };
 const BackendUrl = 'ws://128.199.251.61:5001/';
