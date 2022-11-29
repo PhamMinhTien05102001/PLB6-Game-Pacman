@@ -9,6 +9,7 @@ import { Point } from 'react-easy-crop/types';
 import Cropper from 'react-easy-crop';
 import { Direction } from '../../../model/Types';
 import getCroppedImg from '../utils/cropImage';
+import { useStore } from '../../../components/StoreContext';
 
 const videoConstraints = {
   width: 800,
@@ -19,7 +20,10 @@ const videoConstraints = {
 const captureConfig = {
   width: 300,
   height: 300,
-  timeCapture: 400,
+  timeCapture: {
+    low: 600,
+    fast: 400,
+  },
   acceptThreshold: 1,
   acceptPercent: 90,
 };
@@ -41,6 +45,8 @@ const WebcamGame = observer(
     const webcamRef = useRef<any>(null);
     const [timeReq, setTimeReq] = useState<any>();
     const [gesture, setGesture] = useState<string>();
+    const store = useStore();
+
     const gestureCount = useMemo(() => {
       return {
         Attack: 0,
@@ -90,15 +96,19 @@ const WebcamGame = observer(
       },
     });
 
-    // let camera = null;
     const [imgSrc, setImgSrc] = useState<any>(null);
 
     useEffect(() => {
-      const captureInterval = setInterval(() => {
-        capture();
-      }, captureConfig.timeCapture);
+      const captureInterval = setInterval(
+        () => {
+          capture();
+        },
+        store.game.speed === 2
+          ? captureConfig.timeCapture.fast
+          : captureConfig.timeCapture.low
+      );
       return () => clearInterval(captureInterval);
-    }, []);
+    }, [store.game.speed]);
 
     const resetGestureCount = () => {
       for (let i in gestureCount) {
@@ -106,6 +116,9 @@ const WebcamGame = observer(
       }
     };
 
+    const onContinue = () => {
+      store.game.gamePaused = false;
+    };
     const capture = useCallback(async () => {
       const imageSrc = webcamRef.current.getScreenshot({});
       setImgSrc(imageSrc);
@@ -126,12 +139,18 @@ const WebcamGame = observer(
       <Layout>
         <div className="my-video" style={{ position: 'relative' }}>
           <CaptureFrame />
+          {store.game.gamePaused ? (
+            <button className="btn-video" onClick={onContinue}>
+              Continue
+            </button>
+          ) : null}
           <Webcam
             audio={false}
             width={800}
             height={600}
             ref={webcamRef}
             screenshotFormat="image/png"
+            className={store.game.gamePaused ? 'video-fallback' : ''}
             mirrored={true}
             videoConstraints={videoConstraints}
           />

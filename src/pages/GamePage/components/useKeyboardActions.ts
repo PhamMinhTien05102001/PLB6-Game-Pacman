@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useStore } from '../../../components/StoreContext';
-import { useGame } from '../../../components/StoreContext';
+
 import { MAX_POWER } from '../../../model/detectCollisions';
 
 /* eslint-disable  react-hooks/exhaustive-deps */
@@ -26,7 +26,7 @@ export const useKeyboardActions = (): void => {
         pacMan.nextDirection = 'DOWN';
         break;
       case ' ':
-        if(game.atePills === MAX_POWER){
+        if (game.atePills === MAX_POWER) {
           game.killedGhosts = 0;
           game.pacMan.send('ENERGIZER_EATEN');
           for (const ghost of game.ghosts) {

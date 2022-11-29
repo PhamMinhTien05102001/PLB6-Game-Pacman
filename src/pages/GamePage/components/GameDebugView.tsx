@@ -1,17 +1,30 @@
 /* eslint-disable react/display-name */
-import { Button, Card, Col, Row, Switch, Typography } from 'antd';
+import { Button, Card, Col, Radio, Row, Switch, Typography } from 'antd';
 import { observer } from 'mobx-react-lite';
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components/macro';
 import { useGame, useStore } from '../../../components/StoreContext';
 import { action } from 'mobx';
+import { RadioChangeEvent } from 'antd/lib/radio';
 
 const { Text } = Typography;
+
+const options = [
+  { label: 1, value: 1 },
+  { label: 2, value: 2 },
+];
 
 export const GameDebugView = observer<{ className?: string }>(
   ({ className }) => {
     const store = useStore();
     const game = useGame();
+
+    const [value, setValue] = useState(1);
+
+    const onSpeedChange = ({ target: { value } }: RadioChangeEvent) => {
+      setValue(value);
+      store.game.speed = value;
+    };
     return (
       <Layout className="PacManDebugView">
         <Card title="Game" size="small" bordered={false}>
@@ -45,6 +58,19 @@ export const GameDebugView = observer<{ className?: string }>(
             <ButtonStyled size="small" onClick={store.resetGame} shape="round">
               Restart
             </ButtonStyled>
+          </Row>
+          <Row style={{ marginTop: '20px' }} align="middle" gutter={12}>
+            <Col flex="0 0 auto">
+              <Radio.Group
+                options={options}
+                onChange={onSpeedChange}
+                value={value}
+                optionType="button"
+              />
+            </Col>
+            <Col flex="0 0 auto">
+              <Text>Game speed</Text>
+            </Col>
           </Row>
         </Card>
       </Layout>
