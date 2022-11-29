@@ -24,7 +24,8 @@ import { Progress } from './components/Progress';
 
 export const GamePage: React.FC = observer(() => {
   const store = useStore();
-
+  const [hide, setHide] = useState(false);
+  const [cameraOn, setCameraOn] = useState(true);
   useEffect(() => {
     store.resetGame();
     return () => {
@@ -46,10 +47,8 @@ export const GamePage: React.FC = observer(() => {
     store.game.gamePaused = true;
   };
   useGameLoop();
-  useKeyboardActions();
+  useKeyboardActions(cameraOn);
 
-  const [hide, setHide] = useState(false);
-  const [cameraOn, setCameraOn] = useState(true);
   const toggleCamera = () => {
     setCameraOn(!cameraOn);
   };

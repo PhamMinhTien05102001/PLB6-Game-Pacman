@@ -1,5 +1,12 @@
 import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  KeyboardEvent,
+} from 'react';
 import Webcam from 'react-webcam';
 import styled from 'styled-components';
 import './WebCam.css';
@@ -78,10 +85,10 @@ const WebcamGame = observer(
       onOpen: () => console.log('opened'),
       onMessage(event) {
         const timeRes = Date.now();
+        const jsonEvent = JSON.parse(event.data.replaceAll("'", '"'));
         console.log('New response message');
         console.log('Total time', timeRes - timeReq);
 
-        const jsonEvent = JSON.parse(event.data.replaceAll("'", '"'));
         console.log('Time backend', jsonEvent['Time']);
         console.log(
           'Time reponse not include Backend',
@@ -140,7 +147,16 @@ const WebcamGame = observer(
         <div className="my-video" style={{ position: 'relative' }}>
           <CaptureFrame />
           {store.game.gamePaused ? (
-            <button className="btn-video" onClick={onContinue}>
+            <button
+              className="btn-video"
+              onClick={onContinue}
+              onKeyUp={(e: KeyboardEvent<HTMLButtonElement>) => {
+                console.log(e.key);
+                if (e.key === 'p') {
+                  store.game.gamePaused = false;
+                }
+              }}
+            >
               Continue
             </button>
           ) : null}
