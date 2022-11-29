@@ -19,7 +19,7 @@ const videoConstraints = {
 const captureConfig = {
   width: 300,
   height: 300,
-  timeCapture: 1000,
+  timeCapture: 500,
   acceptThreshold: 2,
   acceptPercent: 90,
 };
@@ -39,9 +39,8 @@ const WebcamGame = observer(
   }) => {
     const [crop, setCrop] = useState<Point>({ x: -800, y: -500 });
     const webcamRef = useRef<any>(null);
-
+    const [timeReq, setTimeReq] = useState<any>();
     const [gesture, setGesture] = useState<string>();
-
     const gestureCount = useMemo(() => {
       return {
         Attack: 0,
@@ -72,13 +71,21 @@ const WebcamGame = observer(
     const { sendMessage } = useWebSocket(BackendUrl, {
       onOpen: () => console.log('opened'),
       onMessage(event) {
+        const timeRes = Date.now();
+        console.log('New response message');
+        console.log('Total time', timeRes - timeReq);
+
         const jsonEvent = JSON.parse(event.data.replaceAll("'", '"'));
+        console.log('Time backend', jsonEvent['Time']);
+        console.log(
+          'Time reponse not include Backend',
+          timeRes - timeReq - jsonEvent['Time'] * 1000
+        );
 
         if (jsonEvent['Percent'] >= captureConfig.acceptPercent) {
           // console.log(response.data['Class Name'], 'Plus one');
           gestureCount[jsonEvent['Class Name'] as gestureCount] += 1;
         }
-
         detectGesture();
       },
     });
@@ -108,35 +115,11 @@ const WebcamGame = observer(
         x: videoConstraints.width - captureConfig.width,
         y: videoConstraints.height - captureConfig.height,
       });
-
       const form = new FormData();
       form.append('imageFile', imgCrop);
+      setTimeReq(Date.now());
+
       sendMessage(imgCrop);
-      // console.log(imgCrop);
-      // axios({
-      //   method: 'post',
-      //   url: API_URL_DEPLOY,
-      //   data: form,
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //     'Access-Control-Allow-Origin': '*',
-      //   },
-      // })
-      //   .then(function(response: any) {
-      //     //handle success
-
-      //     // console.log(response.data);
-      //     if (response.data['Percent'] >= captureConfig.acceptPercent) {
-      //       // console.log(response.data['Class Name'], 'Plus one');
-      //       gestureCount[response.data['Class Name'] as gestureCount] += 1;
-      //     }
-
-      //     detectGesture();
-      //     // setGesture(response.data['Class Name']);
-      //   })
-      //   .catch(function(response) {
-      //     console.log(response);
-      //   });
     }, [webcamRef, setImgSrc]);
 
     return (
