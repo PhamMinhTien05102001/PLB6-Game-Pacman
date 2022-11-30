@@ -9,6 +9,7 @@ import torch.nn.functional as F
 from torchvision import transforms, models
 import PIL
 import io
+import time
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
@@ -102,6 +103,7 @@ async def server(websocket, path):
     print("ws", websocket)
     try:
         async for message in websocket:
+            start_time = time.time()
             for conn in connected:
                 if conn == websocket:
                     try:
@@ -109,7 +111,7 @@ async def server(websocket, path):
                         image = chuyen_base64_sang_anh(imageFile)
                         model = pretrain_model('mobi-v2')
                         prediction, percent = classificationApi(model, image)
-                        data = str({'Class Name': prediction, 'Percent': percent*100})
+                        data = str({'Class Name': prediction, 'Percent': percent*100, 'Time': time.time()-start_time})
                         await conn.send(data)
                         print(data)
 
