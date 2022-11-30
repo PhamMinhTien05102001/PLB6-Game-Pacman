@@ -36,6 +36,9 @@ export class Game {
   @observable
   gamePaused = false;
 
+  @observable
+  showAcc = false;
+
   speed: PixelsPerFrame = DEFAULT_SPEED;
 
   ghosts: Ghost[];

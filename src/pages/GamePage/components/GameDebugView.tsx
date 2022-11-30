@@ -72,6 +72,18 @@ export const GameDebugView = observer<{ className?: string }>(
             <Col flex="0 0 auto">
               <Text>Game speed</Text>
             </Col>
+
+            <Col flex="0 0 auto">
+              <Switch
+                checked={game.showAcc}
+                onChange={checked => {
+                  game.showAcc = checked;
+                }}
+              />
+            </Col>
+            <Col flex="0 0 auto">
+              <Text>Show Gesture Acc</Text>
+            </Col>
           </Row>
         </Card>
       </Layout>

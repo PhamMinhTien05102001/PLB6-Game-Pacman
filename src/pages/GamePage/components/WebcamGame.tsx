@@ -52,6 +52,8 @@ const WebcamGame = observer(
     const webcamRef = useRef<any>(null);
     const [timeReq, setTimeReq] = useState<any>();
     const [gesture, setGesture] = useState<string>();
+    const [gestureAcc, setGestureAcc] = useState<string>();
+    const [acc, setAcc] = useState<any>();
     const store = useStore();
 
     const gestureCount = useMemo(() => {
@@ -76,7 +78,7 @@ const WebcamGame = observer(
           if (i === 'Left') triggerDirection('LEFT');
           if (i === 'Right') triggerDirection('RIGHT');
           if (i === 'Top') triggerDirection('UP');
-          if (i === 'Attack') triggerChaos();
+          // if (i === 'Attack') triggerChaos();
           if (i === 'Stop') triggerGamePause();
         }
       }
@@ -94,7 +96,8 @@ const WebcamGame = observer(
         //   'Time reponse not include Backend',
         //   timeRes - timeReq - jsonEvent['Time'] * 1000
         // );
-
+        setGestureAcc(jsonEvent['Class Name']);
+        setAcc(jsonEvent['Percent']);
         if (jsonEvent['Percent'] >= captureConfig.acceptPercent) {
           // console.log(response.data['Class Name'], 'Plus one');
           gestureCount[jsonEvent['Class Name'] as gestureCount] += 1;
@@ -171,7 +174,13 @@ const WebcamGame = observer(
             videoConstraints={videoConstraints}
           />
         </div>
-        <p style={{ color: 'white' }}>{gesture}</p>
+        {store.game.showAcc ? (
+          <p style={{ color: 'white' }}>
+            {gestureAcc} Accuracy: {acc.toFixed(3)}
+          </p>
+        ) : (
+          <p style={{ color: 'white' }}>{gesture}</p>
+        )}
 
         {imgSrc && (
           <Cropper
