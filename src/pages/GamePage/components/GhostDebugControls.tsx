@@ -24,7 +24,7 @@ export const GhostDebugControls = observer(() => {
         </Col>
         <Col flex="0 0 56px"></Col>
 
-        <Col flex="0 0 56px">
+        {/* <Col flex="0 0 56px">
           <Switch
             checked={store.debugState.ghostViewOptions.wayPoints}
             onChange={action(checked => {
@@ -34,7 +34,7 @@ export const GhostDebugControls = observer(() => {
         </Col>
         <Col flex="0 0 auto">
           <Text>Show Waypoints</Text>
-        </Col>
+        </Col> */}
         <Col flex="0 0 56px"></Col>
       </Row>
     </div>

@@ -25,7 +25,7 @@ import { GameWin } from './components/GameWin';
 
 export const GamePage: React.FC = observer(() => {
   const store = useStore();
-  console.log(store.game.atePills);
+  // console.log(store.game.atePills);
   const [hide, setHide] = useState(false);
   const [cameraOn, setCameraOn] = useState(true);
   useEffect(() => {

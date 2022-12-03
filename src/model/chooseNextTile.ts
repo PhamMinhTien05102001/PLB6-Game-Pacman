@@ -70,6 +70,7 @@ const chooseBestNextTile = ({
   boxDoorIsOpen: boolean;
 }): TileCoordinates | null => {
   const candidates = [] as CandidateTile[];
+  // console.log(targetTile.x, targetTile.y);
   for (const direction of Directions) {
     // Prevent the ghost from going backwards
     if (isOppositeDirection(direction, currentDirection)) {
