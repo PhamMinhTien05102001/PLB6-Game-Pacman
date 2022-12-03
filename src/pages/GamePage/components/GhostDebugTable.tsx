@@ -63,12 +63,12 @@ const columns: ColumnsType<Ghost> = [
     width: 60,
     render: ghost => <KillButton ghost={ghost} />,
   },
-  {
-    title: '',
-    align: 'center',
-    width: 60,
-    render: record => <MoveButton ghost={record} />,
-  },
+  // {
+  //   title: '',
+  //   align: 'center',
+  //   width: 60,
+  //   render: record => <MoveButton ghost={record} />,
+  // },
   {
     title: '',
     render: record => null,
@@ -97,17 +97,17 @@ const KillButton = observer<{ ghost: Ghost }>(({ ghost }) => (
   </Button>
 ));
 
-const MoveButton = observer<{ ghost: Ghost }>(({ ghost }) => (
-  <Button
-    size="small"
-    shape="round"
-    onClick={action(() => {
-      routeAndMoveGhost(ghost);
-    })}
-  >
-    Move
-  </Button>
-));
+// const MoveButton = observer<{ ghost: Ghost }>(({ ghost }) => (
+//   <Button
+//     size="small"
+//     shape="round"
+//     onClick={action(() => {
+//       routeAndMoveGhost(ghost);
+//     })}
+//   >
+//     Move
+//   </Button>
+// ));
 
 export const GhostsDebugTable = observer<{ className?: string }>(
   ({ className }) => {
