@@ -96,6 +96,7 @@ export const getNextTile = (
   const scaledVector = multiplyVector(stepSize, vector);
   const movedTile = addCoordinatesAndVector(tile, scaledVector);
   const nextTile = wrapTileToBounds(movedTile, MAZE_DIMENSIONS_IN_TILES);
+
   return nextTile;
 };
 

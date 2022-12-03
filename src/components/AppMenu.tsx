@@ -20,7 +20,7 @@ export const AppMenu: React.FC = () => {
         <Menu.Item key="/">Home</Menu.Item>
         {/* <Menu.Item key="/sprites">Sprites</Menu.Item>
         <Menu.Item key="/maze">Maze</Menu.Item> */}
-        <Menu.Item key="/way-finding">Way Finding</Menu.Item>
+        {/* <Menu.Item key="/way-finding">Way Finding</Menu.Item> */}
       </MenuStyled>
       <VSpace size="small" />
     </div>

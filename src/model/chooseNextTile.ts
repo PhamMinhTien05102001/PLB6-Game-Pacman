@@ -86,6 +86,7 @@ const chooseBestNextTile = ({
   }
 
   const bestCandidate = minBy(candidates, 'distanceToTarget');
+
   if (bestCandidate) {
     return bestCandidate.tile;
   } else {
