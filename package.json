@@ -51,7 +51,7 @@
     "prettier": "prettier --write **/*.{ts,tsx,md,json,js,sx}",
     "lint": "eslint 'src/**/*.{ts,tsx}'",
     "netlify-build": "tsc --noEmit && yarn lint && yarn test:ci && yarn build",
-    "coverage": "yarn test  --coverage"
+    "coverage": "yarn test  --coverage --watchAll --collectCoverageFrom='src/model/**/*.{ts,tsx}'"
   },
   "eslintConfig": {
     "extends": "react-app"
