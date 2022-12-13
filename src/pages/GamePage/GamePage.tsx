@@ -40,6 +40,7 @@ export const GamePage: React.FC = observer(() => {
   };
   const triggerChaos = () => {
     store.game.killedGhosts = 0;
+    store.game.atePills = 0;
     store.game.pacMan.send('ENERGIZER_EATEN');
     for (const ghost of store.game.ghosts) {
       ghost.send('ENERGIZER_EATEN');
