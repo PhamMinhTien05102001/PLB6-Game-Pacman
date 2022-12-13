@@ -17,6 +17,7 @@ import Cropper from 'react-easy-crop';
 import { Direction } from '../../../model/Types';
 import getCroppedImg from '../utils/cropImage';
 import { useStore } from '../../../components/StoreContext';
+import { MAX_POWER } from '../../../model/detectCollisions';
 
 const videoConstraints = {
   width: 800,
@@ -55,6 +56,7 @@ const WebcamGame = observer(
     const [gestureAcc, setGestureAcc] = useState<string>();
     const [acc, setAcc] = useState<any>();
     const store = useStore();
+    const { game } = store;
 
     const gestureCount = useMemo(() => {
       return {
@@ -78,7 +80,9 @@ const WebcamGame = observer(
           if (i === 'Left') triggerDirection('LEFT');
           if (i === 'Right') triggerDirection('RIGHT');
           if (i === 'Top') triggerDirection('UP');
-          // if (i === 'Attack') triggerChaos();
+          if (game.atePills === MAX_POWER && i === 'Attack') {
+            triggerChaos();
+          }
           if (i === 'Stop') triggerGamePause();
         }
       }
