@@ -94,17 +94,17 @@ const eatPill = (tile: TileCoordinates, game: Game) => {
   game.score += BASIC_PILL_POINTS;
 };
 
-export const MAX_POWER = 150;
+export const MAX_POWER = 30;
 const countPill = (tile: TileCoordinates, game: Game) => {
   if (game.atePills < MAX_POWER) {
-    game.atePills += 1;;
+    game.atePills += 1;
     game.power = (game.atePills / MAX_POWER) * 100;
   }
 };
 
 const countAtePills = (tile: TileCoordinates, game: Game) => {
-   game.pillsCount += 1;
-}
+  game.pillsCount += 1;
+};
 
 const detectGhostCollisions = (game: Game) => {
   const pacManHitBox: Rectangle = getPacManHitBox(
