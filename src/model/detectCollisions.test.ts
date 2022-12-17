@@ -53,38 +53,5 @@ describe('detectCollisions', () => {
         expect(game.killedGhosts).toBe(0);
       });
     });
-
-    describe('when attack', () => {
-      let game: Game;
-      beforeEach(() => {
-        // Arrange
-        const store = new Store();
-        game = new Game(store);
-        game.timestamp = 1;
-        game.atePills = 30;
-        const pacMan = game.pacMan;
-        pacMan.setTileCoordinates({ x: 4, y: 4 });
-        expect(game.score).toBe(0);
-        game.killedGhosts = 1;
-
-        // Act
-        detectCollisions(game);
-      });
-      it('reset ate pill', () => {
-        expect(game.atePills).toBe(0);
-      });
-      it('makes pacman chase', () => {
-        expect(game.pacMan.state).toBe('chasing');
-        expect(game.energizerTimer.running).toBeTruthy();
-      });
-
-      it('makes ghosts frightened', () => {
-        expect(game.ghosts[0].state).toBe('frightened');
-      });
-
-      it('resets killed ghost counter', () => {
-        expect(game.killedGhosts).toBe(0);
-      });
-    });
   });
 });
